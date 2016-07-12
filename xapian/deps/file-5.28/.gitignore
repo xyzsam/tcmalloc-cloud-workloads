@@ -1,0 +1,2 @@
+build/*
+!build/do_configure.sh
