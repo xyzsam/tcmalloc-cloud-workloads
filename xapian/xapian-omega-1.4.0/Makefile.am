@@ -1,0 +1,231 @@
+## Process this file with automake to produce Makefile.in
+
+if MAINTAINER_MODE
+# Export these so that we run the locally installed autotools when building
+# from a bootstrapped git tree.
+export ACLOCAL AUTOCONF AUTOHEADER AUTOM4TE AUTOMAKE
+endif
+
+ACLOCAL_AMFLAGS = -I m4
+
+SUBDIRS = . docs
+
+my-html-tok.h: gen-myhtmltags Makefile.am common/Tokeniseise.pm myhtmlparse.tokens
+	$(PERL) -I'$(srcdir)/common' '$(srcdir)/gen-myhtmltags' '$(srcdir)' < '$(srcdir)/myhtmlparse.tokens'
+
+mimemap.h: gen-mimemap Makefile.am common/Tokeniseise.pm mimemap.tokens
+	$(PERL) -I'$(srcdir)/common' '$(srcdir)/gen-mimemap' '$(srcdir)' < '$(srcdir)/mimemap.tokens'
+
+namedents.h: gen-namedents Makefile.am common/Tokeniseise.pm
+	$(PERL) -I'$(srcdir)/common' '$(srcdir)/gen-namedents' '$(srcdir)'
+
+BUILT_SOURCES = extra/omegascript.vim my-html-tok.h mimemap.h namedents.h
+
+MAINTAINERCLEANFILES = my-html-tok.h mimemap.h namedents.h
+
+EXTRA_DIST =\
+	common/Tokeniseise.pm \
+	extra/omegascript.vim \
+	extra/omegascript.vim.in \
+	gen-mimemap \
+	gen-myhtmltags \
+	gen-namedents \
+	gen-omegascript-vim \
+	mimemap.h \
+	mimemap.tokens \
+	my-html-tok.h \
+	myhtmlparse.tokens \
+	namedents.h \
+	templates/query \
+	templates/topterms \
+	templates/opensearch \
+	templates/godmode \
+	templates/xml \
+	templates/inc/anyalldropbox \
+	templates/inc/anyallradio \
+	templates/inc/toptermsjs \
+	images/nextoff.png \
+	images/next.png \
+	images/page-10.png \
+	images/page-10s.png \
+	images/page-11.png \
+	images/page-11s.png \
+	images/page-1.png \
+	images/page-1s.png \
+	images/page-2.png \
+	images/page-2s.png \
+	images/page-3.png \
+	images/page-3s.png \
+	images/page-4.png \
+	images/page-4s.png \
+	images/page-5.png \
+	images/page-5s.png \
+	images/page-6.png \
+	images/page-6s.png \
+	images/page-7.png \
+	images/page-7s.png \
+	images/page-8.png \
+	images/page-8s.png \
+	images/page-9.png \
+	images/page-9s.png \
+	images/previous.png \
+	images/prevoff.png \
+	images/score-0.png \
+	images/score-10.png \
+	images/score-1.png \
+	images/score-2.png \
+	images/score-3.png \
+	images/score-4.png \
+	images/score-5.png \
+	images/score-6.png \
+	images/score-7.png \
+	images/score-8.png \
+	images/score-9.png \
+	xapian-omega.spec
+
+AM_CPPFLAGS = \
+	-I$(top_srcdir)/common \
+	-DCONFIGFILE_SYSTEM=\"$(sysconfdir)/omega.conf\" \
+	-DPKGLIBBINDIR=\"$(pkglibbindir)\"
+AM_CXXFLAGS += $(XAPIAN_CXXFLAGS)
+
+pkglibbindir = $(pkglibdir)/bin
+pkglibbin_PROGRAMS = omega
+dist_pkglibbin_SCRIPTS = mhtml2html outlookmsg2html rfc822tohtml
+bin_PROGRAMS = omindex scriptindex omindex-list
+dist_bin_SCRIPTS = dbi2omega htdig2omega mbox2omega
+
+check_PROGRAMS = atomparsetest csvesctest htmlparsetest jsonesctest md5test urlenctest utf8converttest
+dist_check_SCRIPTS = omegatest
+# Pass omega path for omegatest in OMEGA environment variable.
+AM_TESTS_ENVIRONMENT = OMEGA=./omega; export OMEGA;
+TESTS =	atomparsetest$(EXEEXT)\
+	csvesctest$(EXEEXT)\
+	htmlparsetest$(EXEEXT)\
+	jsonesctest$(EXEEXT)\
+	md5test$(EXEEXT)\
+	omegatest\
+	urlenctest$(EXEEXT)\
+	utf8converttest$(EXEEXT)
+
+omegadatadir = $(datadir)/omega
+dist_omegadata_DATA = htdig2omega.script mbox2omega.script
+
+dist_sysconf_DATA = omega.conf
+
+noinst_HEADERS = omega.h query.h cgiparam.h index_file.h mime.h\
+ myhtmlparse.h htmlparse.h utils.h configfile.h date.h datetime.h\
+ commonhelp.h cdb.h cdb_int.h failed.h hashterm.h jsonescape.h loadfile.h\
+ md5.h md5wrap.h xmlparse.h metaxmlparse.h values.h utf8convert.h\
+ namedents.h pkglibbindir.h datevalue.h sample.h strcasecmp.h\
+ utf8truncate.h diritor.h runfilter.h freemem.h xpsxmlparse.h transform.h\
+ weight.h expand.h svgparse.h tmpdir.h urldecode.h urlencode.h unixperm.h atomparse.h\
+ xlsxparse.h opendocparse.h msxmlparse.h timegm.h csvescape.h\
+ portability/mkdtemp.h
+
+# headers maintained in xapian-core
+noinst_HEADERS +=\
+	common/append_filename_arg.h\
+	common/gnu_getopt.h\
+	common/keyword.h\
+	common/msvc_dirent.h\
+	common/noreturn.h\
+	common/omassert.h\
+	common/realtime.h\
+	common/safedirent.h\
+	common/safeerrno.h\
+	common/safefcntl.h\
+	common/safesysselect.h\
+	common/safesysstat.h\
+	common/safesyswait.h\
+	common/safeunistd.h\
+	common/safewindows.h\
+	common/safewinsock2.h\
+	common/str.h\
+	common/stringutils.h
+
+AM_LDFLAGS = $(NO_UNDEFINED) $(ICONV_LDFLAGS) $(MAGIC_LDFLAGS)
+
+# We want to compile transform.cc with PCRE_CFLAGS, but if this adds a -I for
+# a directory with a different version of iconv, then we get problems (this
+# has been reported on Mac OS X).  So we only add PCRE_CFLAGS when compiling
+# transform.cc, using the convenience library technique suggested by the
+# automake manual.
+noinst_LTLIBRARIES = libtransform.la
+libtransform_la_SOURCES = transform.cc
+libtransform_la_CPPFLAGS = $(PCRE_CFLAGS)
+libtransform_la_LIBADD = $(PCRE_LIBS)
+
+omega_SOURCES = omega.cc query.cc cgiparam.cc utils.cc configfile.cc date.cc\
+ cdb_init.cc cdb_find.cc cdb_hash.cc cdb_unpack.cc jsonescape.cc loadfile.cc\
+ datevalue.cc common/str.cc sample.cc urlencode.cc weight.cc expand.cc\
+ csvescape.cc
+# Not currently used, and we ought to handle non-Unix perms too: unixperm.cc
+omega_LDADD = $(XAPIAN_LIBS) libtransform.la
+
+omindex_SOURCES = omindex.cc myhtmlparse.cc htmlparse.cc index_file.cc mime.cc\
+ common/getopt.cc commonhelp.cc utils.cc hashterm.cc loadfile.cc md5.cc\
+ md5wrap.cc xmlparse.cc metaxmlparse.cc utf8convert.cc sample.cc diritor.cc\
+ runfilter.cc freemem.cc common/msvc_dirent.cc xpsxmlparse.cc common/str.cc\
+ pkglibbindir.cc svgparse.cc tmpdir.cc urlencode.cc atomparse.cc xlsxparse.cc\
+ opendocparse.cc common/keyword.cc msxmlparse.cc common/safe.cc timegm.cc\
+ datetime.cc
+if NEED_MKDTEMP
+omindex_SOURCES += portability/mkdtemp.cc
+endif
+omindex_LDADD = $(MAGIC_LIBS) $(XAPIAN_LIBS) $(ZLIB_LIBS)
+
+scriptindex_SOURCES = scriptindex.cc myhtmlparse.cc htmlparse.cc\
+ common/getopt.cc commonhelp.cc utils.cc hashterm.cc loadfile.cc\
+ common/safe.cc utf8convert.cc utf8truncate.cc\
+ common/keyword.cc timegm.cc datetime.cc
+scriptindex_LDADD = $(XAPIAN_LIBS)
+
+omindex_list_SOURCES = common/getopt.cc omindex-list.cc
+omindex_list_LDADD = $(XAPIAN_LIBS)
+
+atomparsetest_SOURCES = atomparsetest.cc atomparse.cc htmlparse.cc\
+ myhtmlparse.cc utf8convert.cc common/keyword.cc datetime.cc timegm.cc
+atomparsetest_LDADD = $(NO_INSTALL) $(XAPIAN_LIBS)
+
+htmlparsetest_SOURCES = htmlparsetest.cc myhtmlparse.cc htmlparse.cc\
+ utf8convert.cc common/keyword.cc datetime.cc timegm.cc
+htmlparsetest_LDADD = $(NO_INSTALL) $(XAPIAN_LIBS)
+
+md5test_SOURCES = md5test.cc md5wrap.cc md5.cc
+md5test_LDADD = $(NO_INSTALL)
+
+utf8converttest_SOURCES = utf8converttest.cc utf8convert.cc
+utf8converttest_LDADD = $(NO_INSTALL) $(XAPIAN_LIBS)
+
+urlenctest_SOURCES = urlenctest.cc urlencode.cc
+urlenctest_LDADD = $(NO_INSTALL) $(XAPIAN_LIBS)
+
+csvesctest_SOURCES = csvesctest.cc csvescape.cc
+csvesctest_LDADD = $(NO_INSTALL)
+
+jsonesctest_SOURCES = jsonesctest.cc jsonescape.cc
+jsonesctest_LDADD = $(NO_INSTALL) $(XAPIAN_LIBS)
+
+if !MAINTAINER_NO_DOCS
+dist_man_MANS = omindex.1 scriptindex.1 omindex-list.1
+MAINTAINERCLEANFILES += $(dist_man_MANS)
+endif
+
+if DOCUMENTATION_RULES
+omindex.1: omindex$(EXEEXT) makemanpage
+	./makemanpage ./omindex $(srcdir)/omindex.cc omindex.1
+
+scriptindex.1: scriptindex$(EXEEXT) makemanpage
+	./makemanpage ./scriptindex $(srcdir)/scriptindex.cc scriptindex.1
+
+omindex-list.1: omindex-list$(EXEEXT) makemanpage
+	./makemanpage ./omindex-list $(srcdir)/omindex-list.cc omindex-list.1
+endif
+
+if MAINTAINER_MODE
+extra/omegascript.vim: extra/omegascript.vim.in query.cc configure.ac
+	$(PERL) $(srcdir)/gen-omegascript-vim "$(srcdir)" "$(PACKAGE_VERSION)"
+endif
+
+DISTCHECK_CONFIGURE_FLAGS = "XAPIAN_CONFIG=$(XAPIAN_CONFIG)"
