@@ -17,6 +17,7 @@ void xiosim_roi_end() { __asm__ __volatile__ ("":::"memory"); }
 using namespace std;
 
 int main(int argc, char* argv[]) {
+    xiosim_roi_begin();
     if (argc != 3) {
       cout << "Usage: ./run_queries path/to/db path/to/queries.txt" << endl;
       return -1;
@@ -41,7 +42,6 @@ int main(int argc, char* argv[]) {
     Xapian::MSet matches;
 
     string query_string;
-    xiosim_roi_begin();
     while (!f.eof()) {
         getline(f, query_string);
         if (query_string.length() == 0)

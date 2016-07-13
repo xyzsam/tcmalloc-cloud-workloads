@@ -1,11 +1,11 @@
 include ../common/Makefile.common
 
-SRCS = query_wiki.cc
+SRCS = query_wiki_abstracts.cc
 DB = wiki_abstracts
 QUERIES = queries.txt
 
 .PHONY: all
-all: query_wiki
+all: query_wiki_abstracts
 
 $(DB):
 ifeq ($(wildcard $(DB)),)
@@ -13,11 +13,11 @@ ifeq ($(wildcard $(DB)),)
 	@exit 1
 endif
 
-query_wiki: $(SRCS)
+query_wiki_abstracts: $(SRCS)
 	$(CXX) $(CFLAGS) $(CPPFLAGS) $(CXXFLAGS) $(SRCS) -o $@ $(LDFLAGS)
 
-run_queries: $(DB) query_wiki
-	./query_wiki $(DB) $(QUERIES)
+run_queries: $(DB) query_wiki_abstracts
+	./query_wiki_abstracts $(DB) $(QUERIES)
 
 clean:
 	rm -rf *.o
