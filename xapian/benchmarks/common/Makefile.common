@@ -1,5 +1,7 @@
 # Common variables and settings for building xapian testbenches.
+.PHONY: all $(DB)_check
 
+CURRENT_DIR = $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 XAPIAN_HOME = /home/$(USER)/xapian/install
 UUID_HOME = $(XAPIAN_HOME)
 TCMALLOC_HOME = /home/$(USER)/gperftools/install
@@ -9,10 +11,29 @@ CXX = /group/vlsiarch/skanev/toolchain_6_1/bin/g++
 CC = /group/vlsiarch/skanev/toolchain_6_1/bin/gcc
 
 CFLAGS = -O3 -g
-CPPFLAGS = -I$(XAPIAN_HOME)/include -I$(UUID_HOME)/include
+CPPFLAGS = -I$(XAPIAN_HOME)/include -I$(UUID_HOME)/include -I$(CURRENT_DIR)
 CXXFLAGS = -std=c++1y -fabi-version=2 -D_GLIBCXX_USE_CXX11_ABI=0
 LDFLAGS = $(XAPIAN_HOME)/lib/libxapian.a \
 					$(UUID_HOME)/lib/libuuid.a \
 					$(TCMALLOC_HOME)/lib/libtcmalloc.a \
 					$(LIBUNWIND_HOME)/lib/libunwind.a \
 					-pthread -lrt -lz
+
+# Rules for each benchmark. Define the BMK, DB, SRCS, and QUERIES variables in
+# each benchmark Makefile.
+
+OBJS = $(patsubst %.cc, %.o, $(SRCS))
+
+$(BMK): $(OBJS) $(CURRENT_DIR)/run_benchmark.o
+	$(CXX) $(CFLAGS) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@ $(LDFLAGS)
+
+%.o : %.cc
+	$(CXX) -c $(CFLAGS) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@
+
+run_queries: $(DB)_check $(BMK)
+	./$(BMK) $(DB) $(QUERIES)
+
+clean:
+	rm -rf $(CURRENT_DIR)/*.o
+	rm -rf *.o
+	rm -rf $(BMK)
