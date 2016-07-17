@@ -30,7 +30,7 @@ void read_query_file(std::ifstream &query_file, Xapian::QueryParser &qparser,
     }
 }
 
-// Runs the set of queries and returns the elapsed time in nanoseconds.
+// Runs the set of queries and returns the elapsed time in milliseconds.
 double run_queries(Xapian::Enquire &enquire, Xapian::QueryParser &qparser,
                    query_list_t &queries, std::vector<std::string> &results,
                    unsigned num_results) {
@@ -61,7 +61,7 @@ double run_queries(Xapian::Enquire &enquire, Xapian::QueryParser &qparser,
 
     elapsed_time = (tv_after.tv_sec - tv_before.tv_sec) * 1E6 +
                    (tv_after.tv_usec - tv_before.tv_usec);
-    elapsed_time *= 1000;
+    elapsed_time /= 1E3;
     return elapsed_time;
 }
 
@@ -73,7 +73,7 @@ void run_benchmark(Xapian::Enquire &enquire, Xapian::QueryParser &qparser,
         if (i == 1)
             xiosim_roi_begin();
         time = run_queries(enquire, qparser, queries, results, 10);
-        std::cout << "Total elapsed time: " << time << " ns" << std::endl;
+        std::cout << "Total elapsed time: " << time << " ms" << std::endl;
     }
 
     xiosim_roi_end();
