@@ -1,6 +1,6 @@
 BMK = query_wiki_abstracts
 SRCS = query_wiki_abstracts.cc
 DB = wiki_abstracts
-QUERIES = queries.txt
+QUERIES = queries_all.txt
 
 include ../common/Makefile.common
