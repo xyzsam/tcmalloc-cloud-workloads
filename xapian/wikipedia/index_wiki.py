@@ -6,6 +6,7 @@ import argparse
 import datetime
 import os
 import shlex
+import shutil
 import subprocess
 import sys
 
@@ -20,7 +21,7 @@ class Unbuffered(object):
        return getattr(self.stream, attr)
 sys.stdout = Unbuffered(sys.stdout)
 
-PERM_DB_DIR = "/group/vlsiarch/samxi/xapian_dbs/wiki_pages"
+PERM_DB_DIR = "/group/vlsiarch/samxi/xapian_dbs/wiki_html_pages_2"
 TEMP_DB_DIR = "/dev/shm/wiki/temp_dbs"
 CMD = "%(omindex)s --db %(db)s --url / %(webpath)s"
 OMINDEX_PATH = "/group/vlsiarch/samxi/active_projects/malloc/tcmalloc-cloud-workloads/xapian/xapian-omega-1.4.0/build/omindex"
@@ -80,7 +81,7 @@ class Slice(object):
     if DRY_RUN:
       return
 
-    perm_dir = os.path.join(PERM_DB_DIR, self.slice_name, "default")
+    perm_dir = os.path.join(PERM_DB_DIR, self.slice_name)
     if not os.path.exists(perm_dir):
       os.makedirs(perm_dir)
     shutil.move(self.db_dir, perm_dir)
@@ -91,7 +92,7 @@ class Slice(object):
 
     If it finishes successfully, mark it as done and move the index. Otherwise,
     print an error message.
-    """"
+    """
     if not DRY_RUN:
       self.retcode = self.child.wait()
     else:
