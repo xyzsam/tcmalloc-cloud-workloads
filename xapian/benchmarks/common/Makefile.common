@@ -4,8 +4,8 @@
 CURRENT_DIR = $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 XAPIAN_HOME = /home/$(USER)/xapian/install
 UUID_HOME = $(XAPIAN_HOME)
-TCMALLOC_HOME = /home/$(USER)/gperftools/install
 LIBUNWIND_HOME = /home/skanev/libunwind/install
+TCMALLOC_HOME ?= /home/$(USER)/gperftools/install_all_magic
 
 CXX = /group/vlsiarch/skanev/toolchain_6_1/bin/g++
 CC = /group/vlsiarch/skanev/toolchain_6_1/bin/gcc
@@ -17,6 +17,7 @@ LDFLAGS = $(XAPIAN_HOME)/lib/libxapian.a \
 					$(UUID_HOME)/lib/libuuid.a \
 					$(TCMALLOC_HOME)/lib/libtcmalloc.a \
 					$(LIBUNWIND_HOME)/lib/libunwind.a \
+					-T $(TCMALLOC_HOME)/spec_linker.ld \
 					-pthread -lrt -lz
 
 # Rules for each benchmark. Define the BMK, DB, SRCS, and QUERIES variables in

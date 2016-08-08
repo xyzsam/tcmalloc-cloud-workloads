@@ -37,6 +37,7 @@ double run_queries(Xapian::Enquire &enquire, Xapian::QueryParser &qparser,
     struct timeval tv_before, tv_after;
     double elapsed_time;
     int rv;
+    int query_no = 0;
 
     rv = gettimeofday(&tv_before, NULL);
     if (rv) {
@@ -51,6 +52,8 @@ double run_queries(Xapian::Enquire &enquire, Xapian::QueryParser &qparser,
         for (Xapian::MSetIterator i = matches.begin(); i != matches.end(); ++i) {
             results.push_back(i.get_document().get_data());
         }
+        std::cerr << "Finished processing query " << query_no << std::endl;
+        query_no ++;
     }
 
     rv = gettimeofday(&tv_after, NULL);
@@ -73,7 +76,7 @@ void run_benchmark(Xapian::Enquire &enquire, Xapian::QueryParser &qparser,
         if (i == 1)
             xiosim_roi_begin();
         time = run_queries(enquire, qparser, queries, results, 10);
-        std::cout << "Total elapsed time: " << time << " ms" << std::endl;
+        std::cerr << "Total elapsed time: " << time << " ms" << std::endl;
     }
 
     xiosim_roi_end();
