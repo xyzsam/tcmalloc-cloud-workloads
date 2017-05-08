@@ -5,7 +5,7 @@ These are a set of larger cloud-like workloads to measure the impact of malloc
 speedup. We use Xapian, an open-source search engine, and Masstree, a multicore
 key-value store. The versions provided here were used to produce all results in
 the Mallacc paper; the latest versions can be found at
-[Xapian.org](https://xapian.org) and
+[xapian.org](https://xapian.org) and
 [https://github.com/kohler/masstree-beta](https://github.com/kohler/masstree-beta).
 
 For information about the paper, please refer to:
@@ -28,7 +28,7 @@ directory to build and install the package.
 
 Other than the toolchain installation directories, do not remove any of the
 other CFLAGS/CXXFLAGS specified, like flags about the ABI, sized deletes, etc.
-- these are important.
+These are important.
 
 ## Xapian ##
 
