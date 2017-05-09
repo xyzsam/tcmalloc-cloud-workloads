@@ -80,7 +80,7 @@ The Xapian databases are availble for download from here:
 
 Download them and extract the files to a location.  To make building the search
 index more tractable and reduce individual file sizes, we divided the full
-wikipedia page index into eight shards. We use a ``stub database'' to
+wikipedia page index into eight shards. We use a ''stub database'' to
 dynamically aggregate them together when we execute queries. The abstracts database
 was small enough to not require sharding, but we use a stub database anyways
 for consistency. Therefore, you will need to update the stub database file to
@@ -122,13 +122,16 @@ you want and execute the following command:
 
 ```
 ./query_wiki_pages stub_database.db name_of_queries.txt
+
+# For tiny_index only (no stub database):
+./query_tiny_index tiny_index queries.txt
 ```
 
 The client driver will run the complete set of queries 5 times by default (this
 can be changed in common/run_benchmark.h). The driver will record how long
 each iteration takes. When all iterations are finished, it will print the
 recorded times to stdout, followed by the results of the queries. No printing
-will occur until all queries are finished,
+will occur until all queries are finished.
 
 ## Masstree ##
 
