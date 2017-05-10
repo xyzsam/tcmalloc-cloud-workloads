@@ -2,5 +2,8 @@
 #
 # Installs libuuid to the xapian install directory.
 
+
+TOOLCHAIN_HOME=/usr
+
 ../configure --prefix=/home/${USER}/xapian/install \
-             CC=/group/vlsiarch/skanev/toolchain_6_1/bin/gcc
+             CC=${TOOLCHAIN_HOME}/bin/gcc

@@ -26,13 +26,16 @@ MAGIC_LINKER_SCRIPT="-T ${LIBTCMALLOC_DIR}/spec_linker.ld"
 
 INSTALL_DIR=/home/${USER}/xapian/install
 
+TOOLCHAIN_HOME=/usr/bin
+LIBUNWIND_HOME=/usr/local
+
 ../configure --prefix=${INSTALL_DIR} \
              --enable-static \
              --disable-shared \
-             CC=/group/vlsiarch/skanev/toolchain_6_1/bin/gcc \
-             CXX=/group/vlsiarch/skanev/toolchain_6_1/bin/g++ \
-             CFLAGS="-I/home/libunwind/install/include -g -O3 ${TCMALLOC_SAFETY_FLAGS} ${SIZED_DELETE_FLAGS}" \
-             CPPFLAGS="-I/home/skanev/libunwind/install/include -I${INSTALL_DIR}/include" \
-             CXXFLAGS="-I/home/libunwind/install/include -g -std=c++1y -O3 ${CXXABI_FLAGS} ${TCMALLOC_SAFETY_FLAGS} ${SIZED_DELETE_FLAGS} " \
-             LDFLAGS="-L/home/libunwind/install/lib -O3" \
-             LIBS="${MAGIC_LINKER_SCRIPT} ${INSTALL_DIR}/lib/libuuid.a ${LIBTCMALLOC_DIR}/lib/libtcmalloc.a /home/skanev/libunwind/install/lib/libunwind.a -pthread -lrt"
+             CC=${TOOLCHAIN_HOME}/gcc \
+             CXX=${TOOLCHAIN_HOME}/g++ \
+             CFLAGS="-I${LIBUNWIND_HOME}/include -g -O3 ${TCMALLOC_SAFETY_FLAGS} ${SIZED_DELETE_FLAGS}" \
+             CPPFLAGS="-I${LIBUNWIND_HOME}/include -I${INSTALL_DIR}/include" \
+             CXXFLAGS="-I${LIBUNWIND_HOME}/include -g -std=c++1y -O3 ${CXXABI_FLAGS} ${TCMALLOC_SAFETY_FLAGS} ${SIZED_DELETE_FLAGS} " \
+             LDFLAGS="-L${LIBUNWIND_HOME}/lib -O3" \
+             LIBS="${MAGIC_LINKER_SCRIPT} ${INSTALL_DIR}/lib/libuuid.a ${LIBTCMALLOC_DIR}/lib/libtcmalloc.a ${LIBUNWIND_HOME}/lib/libunwind.a -pthread -lrt"
