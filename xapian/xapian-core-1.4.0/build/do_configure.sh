@@ -24,7 +24,10 @@ TCMALLOC_SAFETY_FLAGS="-fno-builtin-malloc -fno-builtin-calloc -fno-builtin-real
 SIZED_DELETE_FLAGS="-fsized-deallocation"
 MAGIC_LINKER_SCRIPT="-T ${LIBTCMALLOC_DIR}/spec_linker.ld"
 
-INSTALL_DIR=/home/${USER}/xapian/install
+# libuuid doesn't ever call malloc, so there's no need to rebuild it with the
+# special tcmalloc lib if we want the magic instructions.
+XAPIAN_DEPS_DIR=/home/${USER}/xapian/install
+INSTALL_DIR=/home/${USER}/xapian/install${INSTALL_SUFFIX}
 
 TOOLCHAIN_HOME=/usr/bin
 LIBUNWIND_HOME=/usr/local
@@ -35,7 +38,7 @@ LIBUNWIND_HOME=/usr/local
              CC=${TOOLCHAIN_HOME}/gcc \
              CXX=${TOOLCHAIN_HOME}/g++ \
              CFLAGS="-I${LIBUNWIND_HOME}/include -g -O3 ${TCMALLOC_SAFETY_FLAGS} ${SIZED_DELETE_FLAGS}" \
-             CPPFLAGS="-I${LIBUNWIND_HOME}/include -I${INSTALL_DIR}/include" \
+             CPPFLAGS="-I${LIBUNWIND_HOME}/include -I${XAPIAN_DEPS_DIR}/include" \
              CXXFLAGS="-I${LIBUNWIND_HOME}/include -g -std=c++1y -O3 ${CXXABI_FLAGS} ${TCMALLOC_SAFETY_FLAGS} ${SIZED_DELETE_FLAGS} " \
              LDFLAGS="-L${LIBUNWIND_HOME}/lib -O3" \
-             LIBS="${MAGIC_LINKER_SCRIPT} ${INSTALL_DIR}/lib/libuuid.a ${LIBTCMALLOC_DIR}/lib/libtcmalloc.a ${LIBUNWIND_HOME}/lib/libunwind.a -pthread -lrt"
+             LIBS="${MAGIC_LINKER_SCRIPT} ${XAPIAN_DEPS_DIR}/lib/libuuid.a ${LIBTCMALLOC_DIR}/lib/libtcmalloc.a ${LIBUNWIND_HOME}/lib/libunwind.a -pthread -lrt"
