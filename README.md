@@ -126,10 +126,7 @@ dataset comes with at least one text file of queries to run. Select the one
 you want and execute the following command:
 
 ```
-./query_wiki_pages stub_database.db name_of_queries.txt
-
-# For tiny_index only (no stub database):
-./query_tiny_index tiny_index queries.txt
+make run
 ```
 
 The client driver will run the complete set of queries 5 times by default (this
