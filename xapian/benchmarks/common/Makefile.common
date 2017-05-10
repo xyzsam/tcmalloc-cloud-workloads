@@ -10,10 +10,16 @@ TOOLCHAIN_HOME ?= /usr
 
 ####=============================####
 
+ifeq ($(MALLACC), 1)
+	TCMALLOC_HOME = /home/$(USER)/gperftools/install_all_magic
+else
+	TCMALLOC_HOME = /home/$(USER)/gperftools/install
+endif
+
+
 CURRENT_DIR = $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 XAPIAN_HOME = /home/$(USER)/xapian/install
 UUID_HOME = $(XAPIAN_HOME)
-TCMALLOC_HOME = /home/$(USER)/gperftools/install
 
 CXX = $(TOOLCHAIN_HOME)/bin/g++
 CC = $(TOOLCHAIN_HOME)/bin/gcc

@@ -72,7 +72,11 @@ client driver. These are located under [xapian/benchmarks](xapian/benchmarks).
 * wiki_abstracts: Run queries over an index of Wikipedia page *abstracts*.
 * wiki_pages: Run queries over an index of full Wikipedia page text.
 
-To build them, just go to the appropriate folder and run `make`.
+To build them, just go to the appropriate folder and run `make`.  By default, they
+are linked with the baseline TCMalloc library (no magic instructions). To link
+against the special build, instead run `make MALLACC=1`. This assumes that the
+Mallacc enabled TCMalloc library has been built and installed to the right
+place.
 
 ### Xapian search databases ###
 
