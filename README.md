@@ -22,9 +22,14 @@ relies on writing `do_configure.sh` scripts that execute `configure` with hard-c
 toolchain locations and other default options. All installable packages come
 with such a script. You will need to edit each script to change the toolchain
 locations to match your target system, or simply remove all those options if your
-toolchains are located in the default directories (e.g. `/usr/bin`). Execute the
-`do_configure.sh` script, then run `make` and `make install` from within the build
-directory to build and install the package.
+toolchains are located in the default directories (e.g. `/usr/bin`). 
+
+**NOTE**: Before running `do_configure.sh`, we also recommend you run
+`autoreconf -i` from the top level directory of the source package to generate
+the `configure` script for your system and autotools installation.
+
+Then, execute the `do_configure.sh` script, then run `make` and `make install`
+from within the build directory to build and install the package.
 
 Other than the toolchain installation directories, do not remove any of the
 other CFLAGS/CXXFLAGS specified, like flags about the ABI, sized deletes, etc.
